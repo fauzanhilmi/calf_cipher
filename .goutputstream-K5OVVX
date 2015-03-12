@@ -1,0 +1,14 @@
+#include <bits/stdc++.h> //include everything
+
+class calf_cipher{
+	private:
+	
+	public:
+		calf_cipher();
+		
+		string do_encipher(pair<string,string>, string globalkey);
+		string do_decipher(pair<string,string>, string globalkey);
+		
+		
+};
+
