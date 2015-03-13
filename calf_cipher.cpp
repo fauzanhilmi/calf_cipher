@@ -2,8 +2,12 @@
 
 calf_cipher::calf_cipher() {}
 		
-string calf_cipher::do_encipher(pair<string,string> p_in, string g_key) {}
-string calf_cipher::do_decipher(pair<string,string> p_in, string g_key) {}
+string calf_cipher::do_encipher(pair<string,string> p_in, string g_key) {
+	
+}
+string calf_cipher::do_decipher(pair<string,string> p_in, string g_key) {
+		
+}
 		
 pair<string,string> calf_cipher::do_feistel(pair<string,string>) {}
 string calf_cipher::do_operator(string s_in, string i_key, int mode) {}
