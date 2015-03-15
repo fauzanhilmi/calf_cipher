@@ -1,0 +1,25 @@
+#include "calf_cipher.hpp"
+#include <bits/stdc++.h>	//include everything
+using namespace std;
+
+htos (string s_in) {
+	string hex_s = md5(s_in);
+	string ans = "",temp="";
+	for(int i=0; i<hex_s.size(); i++) {
+		if(i%2==0) {
+			temp  = (string)hex_s[i];
+		}
+		else {
+			temp += hex_s[i];
+			stringstream str;
+			int num = (int) strtol(temp,NULL,16);
+			ans += char(num);
+		}
+	}
+	return ans;
+}
+
+int main() {
+		
+	return 0;
+}
