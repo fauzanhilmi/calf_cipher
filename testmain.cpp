@@ -22,10 +22,26 @@ int main() {
 	cout<<x<<endl;
 	cout<<char(x>>24)<<" "<<char(x>>16)<<" "<<char(x>>8)<<" "<<char((x)&0xFF);
 	//cout<<(unsigned int)s1;*/
-	long long x = 2147483647;
+	/*long long x = 2147483647;
 	x+=2147483647;
 	int res = x%MAXINT;
-	cout<<res;
+	cout<<res;*/
+	
+	/*calf_cipher cc;
+	string s1 = "11112222abcd1111xxxx";
+	string s2 = "00001111wxyz0000xxxx";
+	cout<<cc.PLUS(s1,s2);*/
+	//cout<<cc.get_md5(s1)<<" + "<<cc.get_md5(s2)<<endl<<"= "<<cc.PLUS(cc.get_md5(s1),cc.get_md5(s2));
+	
+	/*
+	long long x = ((int)'a'<<24) + ((int)'b'<<16) + ((int)'c'<<8) + ((int)'d');
+	long long y = ((int)'w'<<24) + ((int)'x'<<16) + ((int)'y'<<8) + ((int)'z');
+	long long r = (x+y)%MAXINT;
+	cout<<x<<" + "<<y<<" = "<<r<<endl;
+	cout<<(char)((r>>24)&0xFF);
+	cout<<(char)((r>>16)&0xFF);
+	cout<<(char)((r>>8)&0xFF);
+	cout<<(char)(r&0xFF);*/
 	return 0;
 }
 
