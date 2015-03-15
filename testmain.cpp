@@ -3,6 +3,7 @@
 #define MAXINT 2147483648
 using namespace std;
 
+string long_to_s(unsigned long long ul);
 string htos (string s_in);
 string stoh (string s_in);
 
@@ -42,7 +43,38 @@ int main() {
 	cout<<(char)((r>>16)&0xFF);
 	cout<<(char)((r>>8)&0xFF);
 	cout<<(char)(r&0xFF);*/
+	
+	/*calf_cipher cc;
+	string sin = cc.get_md5("haha");
+	string l = sin.substr(0,sin.length()/2);
+	string r = sin.substr(sin.length()/2);
+	cout<<l<<" "<<r;*/
+	
+	
+	/*calf_cipher cc;
+	string ex = "12345678";
+	unsigned long long val = cc.get_string_value(ex);
+	cout<<val<<endl<<long_to_s(val);*/
+	
+	calf_cipher cc;
+	string s = "1234567890123456";
+	string key = "haha";
+	string l = s.substr(0,s.length()/2);
+	string r = s.substr(s.length()/2);
+	pair<string,string> p (l,r);
+	cout<<cc.do_feistel(p,cc.get_md5(key)).left<<" "<<cc.do_feistel(p,cc.get_md5(key)).right;
 	return 0;
+}
+
+string long_to_s(unsigned long long ul) {
+	string ans="";
+	int shift = 56;
+	for(int i=0; i<8; i++) {
+		char temp = (char)((ul>>shift)&0xFF);
+		ans += temp;
+		shift -= 8;
+	}
+	return ans;
 }
 
 string htos (string s_in) {

@@ -11,13 +11,11 @@ class calf_cipher{
 	private:
 		vector<string> s_blocks;
 		
+		//private methods
 		string XOR (string s1, string s2);
-		//string XOR (string s1, string s2);
-	public:		
-		
+		unsigned long long get_string_value(string s);
 		string PLUS (string s1, string s2); //and mod 2^32!
-		
-		
+	public:		
 		calf_cipher();
 		
 		string do_encipher(string s_in, string g_key);

@@ -7,7 +7,6 @@ string calf_cipher::XOR(string s1, string s2) {
 	assert(s1.size()==s2.size());
 	for(int i=0; i<s1.size(); i++) {
 		char c = s1[i]^s2[i];
-		cout<<s1[i]<<" ^ "<<s2[i]<<" = "<<c<<endl;
 		ans += c;
 	}
 	return ans;
@@ -47,6 +46,18 @@ string calf_cipher::PLUS (string s1, string s2) {//and mod 2^32!
 	return ans;
 }
 
+unsigned long long calf_cipher::get_string_value(string s) {
+	int size = s.size();
+	unsigned long long ans=0;
+	int shift = 0;
+	for(int i=size-1; i>=0; i--) {
+		unsigned long long temp = (unsigned long long)s[i];
+		ans += (unsigned long long)(temp<<(shift*8));
+		shift++;
+	}
+	return ans;
+}
+
 string calf_cipher::do_encipher(string s_in, string g_key) {
 	s_blocks.clear(); //clear blocks of string
 	string temp;
@@ -69,16 +80,40 @@ string calf_cipher::do_encipher(string s_in, string g_key) {
 	
 	return "";
 }
+
 string calf_cipher::do_decipher(string s_in, string g_key) {
 		
 }
 		
 pair<string,string> calf_cipher::do_feistel(pair<string,string> p, string i_key) {
+	//cut key into two halves, then OP them to get 64-bit key
+	string l_i_key = i_key.substr(0,i_key.length()/2);
+	string r_i_key = i_key.substr(i_key.length()/2);
+	unsigned long long l_key_val = get_string_value(l_i_key);
+	unsigned long long r_key_val = get_string_value(r_i_key);
+	int mode = (int)((r_key_val)%4);
+	string key = do_operator(l_i_key,r_i_key,mode);
+	
+	//start the round
 	string r_in = p.right;
 	string l_in = p.left;
+	assert(r_in.size()==l_in.size());
 	
-	r_in = r_in;//disub_bytes
+	//sub_bytes right bytes
+	r_in = r_in;
 	
+	//op right bytes
+	r_in = do_operator(r_in, key, mode);
+	
+	//xor both bytes to get new right bytes
+	string r_new = XOR(l_in, r_in);
+	
+	//new left bytes are simply old right bytes
+	string l_new = r_in;
+	
+	//return them
+	pair<string,string> p_ans (l_new, r_new);
+	return p_ans;
 }
 
 string calf_cipher::do_operator(string s_in, string i_key, int mode) {
