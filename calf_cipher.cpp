@@ -58,11 +58,29 @@ unsigned long long calf_cipher::get_string_value(string s) {
 	return ans;
 }
 
-string calf_cipher::do_encipher(string s_in, string g_key) {
+string calf_cipher::single_encipher(string s_in, string i_key) {
+	string r_key = i_key;
+	string l_in = s_in.substr(0,s_in.length()/2);
+	string r_in = s_in.substr(s_in.length()/2);
+	pair<string,string> p_in (l_in, r_in);
+	pair<string,string> p_out;
+	
+	//do the feister round 17 times
+	for(int i=0; i<17; i++) { 
+		p_out = do_feistel(p_in, r_key);
+		r_key = get_md5(r_key);
+	}
+	string ans = p_out.left + p_out.right;
+	return ans;
+}
+
+string calf_cipher::do_encipher(string s_in, string g_key) { //BELUM BUAT SEMUA BLOCK!
 	s_blocks.clear(); //clear blocks of string
-	string temp;
+	
+	//partitioning s_in into s_blocks
+	string temp="";
 	for(int i=0; i<s_in.size(); i++) {
-		if(i%32==0) {
+		if(i%16==0) {
 			if(i>0) s_blocks.push_back(temp);
 			temp = "";
 		}
@@ -70,15 +88,21 @@ string calf_cipher::do_encipher(string s_in, string g_key) {
 	}
 	if(temp!="") { //handling last string, padding zeroes in the back until length = 32 
 		string last_s = temp;
-		int remainder = 32 - last_s.size();
+		int remainder = 16 - last_s.size();
 		for(int i=0; i<remainder; i++) last_s += (char)0;
 		s_blocks.push_back(last_s);
 	}
 	
 	//get round1 key
-	string r1_key = get_md5(g_key);
+	string r_key = get_md5(g_key);
+	string ans="";
 	
-	return "";
+	//encipher each block, it is ECB mode
+	for(int i=0; i<s_blocks.size(); i++) {
+		string s_b = single_encipher(s_blocks[i], r_key);
+		ans += s_b;
+	}
+	return ans;
 }
 
 string calf_cipher::do_decipher(string s_in, string g_key) {
@@ -94,12 +118,15 @@ pair<string,string> calf_cipher::do_feistel(pair<string,string> p, string i_key)
 	int mode = (int)((r_key_val)%4);
 	string key = do_operator(l_i_key,r_i_key,mode);
 	
-	//start the round
 	string r_in = p.right;
-	string l_in = p.left;
+	string l_in = p.left; 
 	assert(r_in.size()==l_in.size());
+		
+	//new left bytes are simply old right bytes
+	string l_new = r_in;
 	
-	//sub_bytes right bytes
+	//start the round
+	//sub_bytes right bytes BELUM!
 	r_in = r_in;
 	
 	//op right bytes
@@ -107,9 +134,6 @@ pair<string,string> calf_cipher::do_feistel(pair<string,string> p, string i_key)
 	
 	//xor both bytes to get new right bytes
 	string r_new = XOR(l_in, r_in);
-	
-	//new left bytes are simply old right bytes
-	string l_new = r_in;
 	
 	//return them
 	pair<string,string> p_ans (l_new, r_new);

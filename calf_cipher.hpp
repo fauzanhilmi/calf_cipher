@@ -12,18 +12,19 @@ class calf_cipher{
 		vector<string> s_blocks;
 		
 		//private methods
-		string XOR (string s1, string s2);
-		unsigned long long get_string_value(string s);
+		string XOR (string s1, string s2);		
 		string PLUS (string s1, string s2); //and mod 2^32!
-	public:		
-		calf_cipher();
-		
-		string do_encipher(string s_in, string g_key);
-		string do_decipher(string s_in, string g_key);
+		unsigned long long get_string_value(string s);
+		string single_encipher(string s_in, string i_key);
 		
 		pair<string,string> do_feistel(pair<string,string> p, string i_key);
 		string do_operator(string s_in, string i_key, int mode);
 		string sub_bytes(string s_in);
 		string get_md5(string s_in);
+	public:		
+		calf_cipher();
+		
+		string do_encipher(string s_in, string g_key);
+		string do_decipher(string s_in, string g_key);
 };
 
