@@ -10,6 +10,7 @@ using namespace std;
 class calf_cipher{
 	private:
 		vector<string> s_blocks;
+		static const unsigned char s_box[256];
 		
 		//private methods
 		string XOR (string s1, string s2);		
