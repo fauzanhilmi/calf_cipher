@@ -63,14 +63,35 @@ string calf_cipher::single_encipher(string s_in, string i_key) {
 	string l_in = s_in.substr(0,s_in.length()/2);
 	string r_in = s_in.substr(s_in.length()/2);
 	pair<string,string> p_in (l_in, r_in);
-	pair<string,string> p_out;
+	pair<string,string> p_out = p_in;
 	
 	//do the feister round 17 times
 	for(int i=0; i<17; i++) { 
-		p_out = do_feistel(p_in, r_key);
+		p_out = do_feistel(p_out, r_key);
 		r_key = get_md5(r_key);
 	}
 	string ans = p_out.left + p_out.right;
+	return ans;
+}
+
+string calf_cipher::single_decipher(string s_in, string i_key) { //TODO
+	vector<string> r_key;
+	r_key.push_back(i_key);
+
+	string l_in = s_in.substr(0,s_in.length()/2);
+	string r_in = s_in.substr(s_in.length()/2);
+	pair<string,string> p_in (r_in, l_in);
+	pair<string,string> p_out = p_in;
+	
+	//generate round key
+	for(int i = 1; i < 17; i++)
+		r_key.push_back(get_md5(r_key[i-1]));
+
+	//do the feister round 17 times
+	for(int i=16; i>=0; i--) { 
+		p_out = do_feistel(p_out, r_key[i]);
+	}
+	string ans = p_out.right + p_out.left;
 	return ans;
 }
 
@@ -105,8 +126,34 @@ string calf_cipher::do_encipher(string s_in, string g_key) { //BELUM BUAT SEMUA 
 	return ans;
 }
 
-string calf_cipher::do_decipher(string s_in, string g_key) {
-		
+string calf_cipher::do_decipher(string s_in, string g_key) { //TODO
+	s_blocks.clear(); //clear blocks of string
+	//partitioning s_in into s_blocks
+	string temp="";
+	for(int i=0; i<s_in.size(); i++) {
+		if(i%16==0) {
+			if(i>0) s_blocks.push_back(temp);
+			temp = "";
+		}
+		temp += s_in[i];
+	}
+	if(temp!="") { //handling last string, padding zeroes in the back until length = 32 
+		string last_s = temp;
+		int remainder = 16 - last_s.size();
+		for(int i=0; i<remainder; i++) last_s += (char)0;
+		s_blocks.push_back(last_s);
+	}
+	
+	//get round1 key
+	string r_key = get_md5(g_key);
+	string ans="";
+	
+	//encipher each block, it is ECB mode
+	for(int i=0; i<s_blocks.size(); i++) {
+		string s_b = single_decipher(s_blocks[i], r_key);
+		ans += s_b;
+	}
+	return ans;
 }
 		
 pair<string,string> calf_cipher::do_feistel(pair<string,string> p, string i_key) {

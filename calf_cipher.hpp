@@ -16,6 +16,7 @@ class calf_cipher{
 		string PLUS (string s1, string s2); //and mod 2^32!
 		unsigned long long get_string_value(string s);
 		string single_encipher(string s_in, string i_key);
+		string single_decipher(string s_in, string i_key);
 		
 		pair<string,string> do_feistel(pair<string,string> p, string i_key);
 		string do_operator(string s_in, string i_key, int mode);
