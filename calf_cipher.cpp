@@ -137,7 +137,29 @@ string calf_cipher::do_encipher(string s_in, string g_key) { //BELUM BUAT SEMUA 
 	string r_key = get_md5(g_key);
 	string ans="";
 	
-	//encipher each block, it is ECB mode
+	if (isCBC) { //TO_TEST
+		//make initialization vector dari g_key
+		string init_v = get_md5(g_key);
+		
+		for(int i=0; i<s_blocks.size(); i++) { //do encryption
+			string result = XOR(init_v,s_blocks[i]);
+			init_v = single_encipher(result, r_key);
+			ans += init_v;
+		}
+	}
+	else if (isCFB) { //TO_TEST
+		//make initialization vector dari g_key
+		string init_v = get_md5(g_key);
+		
+		for(int i=0; i<s_blocks.size()*16; i++) { //do encryption
+			string MSC = "" + single_encipher(init_v, r_key).substr(0,1);
+			string plainchar = "" + s_blocks[i/16].substr(i%16,1);
+			string result = XOR(MSC,plainchar);
+			ans += result;
+			init_v = init_v.substr(1) + result;
+		}
+	}
+	else	//encipher each block, it is ECB mode
 	for(int i=0; i<s_blocks.size(); i++) {
 		string s_b = single_encipher(s_blocks[i], r_key);
 		ans += s_b;
@@ -167,7 +189,30 @@ string calf_cipher::do_decipher(string s_in, string g_key) { //TODO
 	string r_key = get_md5(g_key);
 	string ans="";
 	
-	//encipher each block, it is ECB mode
+	if (isCBC) { //TO_TEST
+		//make initialization vector dari g_key
+		string init_v = get_md5(g_key);
+		
+		for(int i=0; i<s_blocks.size(); i++) { //do encryption
+			string dec = single_decipher(s_blocks[i], r_key);
+			string result = XOR(dec,init_v);
+			ans += result;
+			init_v = s_blocks[i];
+		}
+	}
+	else if(isCFB) { //TODO
+		//make initialization vector dari g_key
+		string init_v = get_md5(g_key);
+		
+		for(int i=0; i<s_blocks.size()*16; i++) { //do encryption
+			string MSC = "" + single_encipher(init_v, r_key).substr(0,1);
+			string cipherchar = "" + s_blocks[i/16].substr(i%16,1);
+			string result = XOR(MSC,cipherchar);
+			ans += result;
+			init_v = init_v.substr(1) + cipherchar;
+		}
+	}
+	else	//encipher each block, it is ECB mode
 	for(int i=0; i<s_blocks.size(); i++) {
 		string s_b = single_decipher(s_blocks[i], r_key);
 		ans += s_b;

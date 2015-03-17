@@ -23,7 +23,8 @@ class calf_cipher{
 		string do_operator(string s_in, string i_key, int mode);
 		string sub_bytes(string s_in);
 		string get_md5(string s_in);
-	public:		
+	public:	
+		bool isCBC, isCFB;
 		calf_cipher();
 		
 		string do_encipher(string s_in, string g_key);
